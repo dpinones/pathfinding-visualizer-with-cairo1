@@ -28,13 +28,25 @@ async fn main() -> std::io::Result<()> {
 }
 
 fn write_cairo_to_file(cairo: String) -> String {
+    let mut file = File::open("sketch/template.cairo").unwrap();
+    let mut contents = String::new();
+    file.read_to_string(&mut contents).unwrap();
+
+    let updated_contents = contents
+        .replace("$1", "2")
+        .replace("$2", "2")
+        .replace("$3", "13")
+        .replace("$4", "13");
+
     let mut file = File::create("sketch/lib.cairo").unwrap();
-    let _r = file.write_all(&cairo.as_bytes());
+    file.write_all(updated_contents.as_bytes()).unwrap();
     String::from("sketch")
 }
 
 fn handle_cairo_run(cairo: String) -> String {
+    println!("Handling cairo run: {:#?}", cairo);
     let path = write_cairo_to_file(cairo);
+    // let path = "sketch".to_string();
     match run_cairo(&path) {
         Ok(v) => v,
         Err(e) => e.to_string(),
